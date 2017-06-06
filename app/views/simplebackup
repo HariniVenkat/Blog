@@ -1,0 +1,400 @@
+============change 2.1============================articlescontroller.rb=========
+class ArticlesController < ApplicationController
+ 
+
+def index
+  @articles= Article.all
+end
+
+
+def show
+    @article = Article.find(params[:id])
+  end
+
+
+  def new
+  
+@article = Article.new
+  end
+
+
+def create
+  @article = Article.new(params[:article])
+ 
+  @article.save
+  redirect_to @article
+end
+
+
+
+#this is a hash method
+private #used as strong parameters
+  def article_params
+    params.require(:article).permit(:title, :text)
+  end
+
+
+
+end
+
+
+=======change2.1============new.html.erb===================================
+<!-- going to add ...display error message code....-->
+
+
+
+<%= form_for :article, url: articles_path do |f| %>
+  <p>
+    <%= f.label :title %><br>
+    <%= f.text_field :title %>
+  </p>
+ 
+  <p>
+    <%= f.label :text %><br>
+    <%= f.text_area :text %>
+  </p>
+ 
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+
+
+
+
+<%= link_to 'back', articles_path %>
+
+======================change 2.2=======================controller=====================
+def create
+  #first!!@article = Article.new(params[:article])....now changed...
+ @article = Article.new(article_params)
+
+
+    if  @article.save
+        redirect_to @article
+
+    else
+      render 'new'
+
+    end
+
+
+
+end
+
+
+
+#this is a hash method
+private #used as strong parameters
+  def article_params
+    params.require(:article).permit(:title, :text)
+  end
+
+=================alternate1.1===============
+<td><%= link_to 'Edit', edit_article_path(article) %></td>
+
+for this we can use.........
+
+instance=Modelname.find(id value...or attribute)
+instance.attributekey="value"
+istance.save..
+
+we can also have...................
+instance=Tablename.new(hash)
+instance.save
+
+
+======================change 3.1=================
+in new.html.erb
+
+
+<%= form_for :article, url: articles_path do |f| %>
+ 
+  <% if @article.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@article.errors.count, "error") %> prohibited
+        this article from being saved:
+      </h2>
+      <ul>
+        <% @article.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+ 
+  <p>
+    <%= f.label :title %><br>
+    <%= f.text_field :title %>
+  </p>
+ 
+  <p>
+    <%= f.label :text %><br>
+    <%= f.text_area :text %>
+  </p>
+ 
+  <p>
+    <%= f.submit %>
+  </p>
+ 
+<% end %>
+ 
+<%= link_to 'Back', articles_path %>
+
+
+
+in show.html.erb
+
+
+
+
+<h1>Edit article</h1>
+ 
+<%= form_for(@article) do |f| %>
+ 
+  <% if @article.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@article.errors.count, "error") %> prohibited
+        this article from being saved:
+      </h2>
+      <ul>
+        <% @article.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+ 
+  <p>
+    <%= f.label :title %><br>
+    <%= f.text_field :title %>
+  </p>
+ 
+  <p>
+    <%= f.label :text %><br>
+    <%= f.text_area :text %>
+  </p>
+ 
+  <p>
+    <%= f.submit %>
+  </p>
+ 
+<% end %>
+ 
+<%= link_to 'Back', articles_path %>
+
+
+
+
+
+
+
+
+
+in _form.html.erb
+
+===============================change 3.2====================
+<p>
+  <strong>Title:</strong>
+  <%= @article.title %>
+</p>
+ 
+<p>
+  <strong>Text:</strong>
+  <%= @article.text %>
+</p>
+
+<%= link_to 'back', articles_path %>
+
+added comments in show.html.erb
+
+
+
+=================================change 6.1====================
+_form
+<p>
+  <strong>Title:</strong>
+  <%= @article.title %>
+</p>
+ 
+<p>
+  <strong>Text:</strong>
+  <%= @article.text %>
+</p>
+ 
+<h2>Comments</h2>
+<% @article.comments.each do |comment| %>
+  <p>
+    <strong>Commenter:</strong>
+    <%= comment.commenter %>
+  </p>
+ 
+  <p>
+    <strong>Comment:</strong>
+    <%= comment.body %>
+  </p>
+<% end %>
+<p> </p> 
+<h2>Add a comment:</h2>
+<%= form_for([@article, @article.comments.build]) do |f| %>
+  <p>
+    <%= f.label :commenter %><br>
+    <%= f.text_field :commenter %>
+  </p>
+  <p>
+    <%= f.label :body %><br>
+    <%= f.text_area :body %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+ 
+<%= link_to 'Edit', edit_article_path(@article) %> |
+<%= link_to 'Back', articles_path %>
+=============================================================================
+
+
+
+
+
+
+
+
+change 4.1====
+========================article controller before change================
+class ArticlesController < ApplicationController
+ 
+
+def index
+  #going to list all article
+  @articles= Article.all
+end
+
+
+def show
+#going to show the particular article...
+
+    @article = Article.find(params[:id])
+  end
+
+
+  def new
+#simply instantiate..........
+
+      @article = Article.new
+  end
+
+
+#adding edit function=========
+def edit
+  #fetch particular id....it must be passed as parameter from the form @article is the instance
+  @article = Article.find(params[:id])   
+end
+
+
+
+#here is the update action......
+def update
+  
+#it is rendered by the edit....the call is redirected here...then result is sent back....
+
+  @article = Article.find(params[:id])
+ #update is a built in method......article params defines the strong parameters.
+          if @article.update(article_params)   
+            redirect_to @article
+          else
+            render 'edit'
+          end
+end
+
+
+
+
+
+
+def create
+  #first!!@article = Article.new(params[:article])....now changed...
+ @article = Article.new(article_params)
+
+
+    if  @article.save
+        redirect_to @article
+
+    else
+      render 'new'
+
+    end
+
+
+
+end
+
+
+#adding delete action......it takes the parameter id....it is called using the builtin delete method...
+def destroy
+  @article = Article.find(params[:id])
+  @article.destroy
+ 
+  redirect_to articles_path
+end
+
+
+
+
+
+
+#this is a hash method
+private #used as strong parameters
+  def article_params
+    params.require(:article).permit(:title, :text)
+  end
+
+
+
+end
+=============================rake routes change after nesting the resources=========
+>>>>>>previous>>>>>>>>>
+
+Prefix Verb   URI Pattern                  Controller#Action
+    articles GET    /articles(.:format)          articles#index
+             POST   /articles(.:format)          articles#create
+ new_article GET    /articles/new(.:format)      articles#new
+edit_article GET    /articles/:id/edit(.:format) articles#edit
+     article GET    /articles/:id(.:format)      articles#show
+             PATCH  /articles/:id(.:format)      articles#update
+             PUT    /articles/:id(.:format)      articles#update
+             DELETE /articles/:id(.:format)      articles#destroy
+
+
+>>>>>>>>>>current>>>>>>>>
+
+Prefix Verb   URI Pattern                                       Controller#Action
+    article_comments GET    /articles/:article_id/comments(.:format)          comments#index
+                     POST   /articles/:article_id/comments(.:format)          comments#create
+ new_article_comment GET    /articles/:article_id/comments/new(.:format)      comments#new
+edit_article_comment GET    /articles/:article_id/comments/:id/edit(.:format) comments#edit
+     article_comment GET    /articles/:article_id/comments/:id(.:format)      comments#show
+                     PATCH  /articles/:article_id/comments/:id(.:format)      comments#update
+                     PUT    /articles/:article_id/comments/:id(.:format)      comments#update
+                     DELETE /articles/:article_id/comments/:id(.:format)      comments#destroy
+            articles GET    /articles(.:format)                               articles#index
+                     POST   /articles(.:format)                               articles#create
+         new_article GET    /articles/new(.:format)                           articles#new
+        edit_article GET    /articles/:id/edit(.:format)                      articles#edit
+             article GET    /articles/:id(.:format)                           articles#show
+                     PATCH  /articles/:id(.:format)                           articles#update
+                     PUT    /articles/:id(.:format)                           articles#update
+                     DELETE /articles/:id(.:format)                           articles#destroy
+============================================================================
+
+
+
+
+
+
+
+
+
