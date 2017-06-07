@@ -47,7 +47,7 @@ def destroy
 
 
 
-
+#this is for strong parameter....
 
  
   private
