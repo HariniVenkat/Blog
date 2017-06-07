@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   
 
+  get 'dashboard/homepage'
+
 #specify the resource....so all the routes are specified inbuilt...
 #resources :articles    #specify plural not singular........
 

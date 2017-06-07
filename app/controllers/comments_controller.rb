@@ -49,7 +49,7 @@ def destroy
 
 
 
- 
+ #this is for strong parameters....it is a hash.....
   private
     def comment_params
       params.require(:comment).permit(:commenter, :body)
